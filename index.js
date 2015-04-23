@@ -4,10 +4,10 @@ var Transformer = babel.Transformer;
 
 module.exports = new Transformer('angular2-type-assertion', {
   // TODO: Babel's parser doesn't support return type of arrow function.
-  Function: function Function(node, parent, scope, file) {
+  Function: function (node, parent, scope, file) {
     // TODO: Insert "import { assert } from 'rtts_assert/rtts_assert';" outside.
     insertArgumentAssersion(node);
-    insertReturnAssertion(node);
+    insertReturnAssertion(node, scope);
   }
 });
 
@@ -61,6 +61,7 @@ function insertArgumentAssersion(func) {
     acc.push(types[i]);
     return acc;
   }, new Array(identifiers.length * 2));
+  // TODO: Use uid for assert.
   var statement = t.expressionStatement(
     t.callExpression(
       t.memberExpression(t.identifier('assert'), t.identifier('argumentTypes')),
@@ -70,26 +71,37 @@ function insertArgumentAssersion(func) {
   func.body.body.unshift(statement);
 }
 
-function insertReturnAssertion(func) {
+var returnVisitor = {
+  ReturnStatement: {
+    enter: function (node, parent, scope, state) {
+      // Ignore inner functions.
+      if (scope.getFunctionParent() !== state.scope) {
+        return;
+      }
+      var args = [
+        node.argument,
+        typeForAnnotation(state.annotation)
+      ];
+      // TODO: Use uid for assert.
+      var statement = t.returnStatement(
+        t.callExpression(
+          t.memberExpression(t.identifier('assert'), t.identifier('returnTypes')),
+          args
+        )
+      );
+      return statement;
+    }
+  }
+};
+
+function insertReturnAssertion(func, scope) {
   if (!func.returnType) {
     return;
   }
+  // Replace all returns in the very function scope.
   var annotation = func.returnType.typeAnnotation;
-  // TODO: Find all returns in the function scope.
-  var body = func.body.body;
-  var lastStatement = body[body.length - 1];
-  if (lastStatement.type !== 'ReturnStatement') {
-    return;
-  }
-  var args = [
-    lastStatement.argument,
-    typeForAnnotation(annotation)
-  ];
-  var statement = t.returnStatement(
-    t.callExpression(
-      t.memberExpression(t.identifier('assert'), t.identifier('returnTypes')),
-      args
-    )
-  );
-  body[body.length - 1] = statement;
+  scope.traverse(func, returnVisitor, {
+    scope: scope,
+    annotation: annotation
+  });
 }
