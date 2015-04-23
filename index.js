@@ -3,18 +3,11 @@ var t = babel.types;
 var Transformer = babel.Transformer;
 
 module.exports = new Transformer('angular2-type-assertion', {
-  ClassDeclaration: function ClassDeclaration(node, parent, scope, file) {
+  // TODO: Babel's parser doesn't support return type of arrow function.
+  Function: function Function(node, parent, scope, file) {
     // TODO: Insert "import { assert } from 'rtts_assert/rtts_assert';" outside.
-    var classRef = node.id;
-    var classBody = node.body.body;
-    // TODO: Assert also other types of functions.
-    classBody.forEach(function (bodyNode) {
-      if (bodyNode.type !== 'MethodDefinition') {
-        return;
-      }
-      insertArgumentAssersion(bodyNode.value);
-      insertReturnAssertion(bodyNode.value);
-    });
+    insertArgumentAssersion(node);
+    insertReturnAssertion(node);
   }
 });
 

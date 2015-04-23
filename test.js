@@ -34,4 +34,7 @@ function colorForPart(part) {
   }
 }
 
+test('function-declaration');
+test('arrow-function');
 test('class-instance-method');
+test('class-static-method');
