@@ -1,0 +1,34 @@
+{
+  "name": "babel-plugin-type-assertion",
+  "version": "0.0.1",
+  "description": "An experimental babel plugin for rtts_assert",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shuhei/babel-plugin-type-assertion"
+  },
+  "keywords": [
+    "babel",
+    "angular",
+    "angular2",
+    "rtts_assert"
+  ],
+  "author": "Shuhei Kagawa <shuhei.kagawa@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shuhei/babel-plugin-type-assertion/issues"
+  },
+  "homepage": "https://github.com/shuhei/babel-plugin-type-assertion",
+  "peerDependencies": {
+    "babel-core": "^5.1.11"
+  },
+  "devDependencies": {
+    "babel-core": "^5.1.11",
+    "chalk": "^1.0.0",
+    "diff": "^1.3.2",
+    "tape": "^4.0.0"
+  }
+}
