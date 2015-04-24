@@ -85,7 +85,7 @@ var returnVisitor = {
       // TODO: Use uid for assert.
       var statement = t.returnStatement(
         t.callExpression(
-          t.memberExpression(t.identifier('assert'), t.identifier('returnTypes')),
+          t.memberExpression(t.identifier('assert'), t.identifier('returnType')),
           args
         )
       );

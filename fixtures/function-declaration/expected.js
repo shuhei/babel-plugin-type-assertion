@@ -5,11 +5,11 @@ function doSomething(str, num, bool) {
 
   if (!bool) {
     if (str !== num) {
-      return assert.returnTypes(new Foo(str), Foo);
+      return assert.returnType(new Foo(str), Foo);
     }
   }
   var nums = [num].forEach(function (item) {
     return num * 2;
   });
-  return assert.returnTypes(new Foo(), Foo);
+  return assert.returnType(new Foo(), Foo);
 }

@@ -4,7 +4,7 @@
   "description": "An experimental babel plugin for rtts_assert",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
   "devDependencies": {
     "babel-core": "^5.1.11",
     "chalk": "^1.0.0",
-    "diff": "^1.3.2"
+    "diff": "^1.3.2",
+    "rtts_assert": "^2.0.0-alpha.20"
   }
 }
