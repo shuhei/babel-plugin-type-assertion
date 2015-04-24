@@ -9,10 +9,21 @@ a.throws(() => {
   hello(3);
 }, /Invalid arguments given/);
 
-console.log('- runtime: return');
+console.log('- runtime: last return');
 a.throws(() => {
   function hello(str: string): number {
     return str;
   }
   hello('hello');
 }, /Expected to return an instance of number, got "hello"/);
+
+console.log('- runtime: early return');
+a.throws(() => {
+  function hello(str: string): number {
+    if (str.length === 0) {
+      return 'wow';
+    }
+    return str.length;
+  }
+  hello('');
+}, /Expected to return an instance of number, got "wow"/);
