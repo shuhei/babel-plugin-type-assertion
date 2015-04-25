@@ -1,5 +1,7 @@
 "use strict";
 
+var assert = require("rtts_assert/es6/src/rtts_assert").assert;
+
 var Foo = (function () {
   function Foo() {
     babelHelpers.classCallCheck(this, Foo);

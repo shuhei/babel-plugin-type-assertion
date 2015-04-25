@@ -1,5 +1,4 @@
 import a from 'assert';
-import { assert } from 'rtts_assert/es6/src/rtts_assert';
 
 console.log('- runtime: argument');
 a.throws(() => {
