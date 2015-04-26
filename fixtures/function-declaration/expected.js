@@ -1,17 +1,17 @@
 "use strict";
 
-var assert = require("rtts_assert/es6/src/rtts_assert").assert;
+var _assert = require("rtts_assert/es6/src/rtts_assert");
 
 function doSomething(str, num, bool) {
-  assert.argumentTypes(str, assert.type.string, num, assert.type.number, bool, assert.type.boolean);
+  _assert.assert.argumentTypes(str, _assert.assert.type.string, num, _assert.assert.type.number, bool, _assert.assert.type.boolean);
 
   if (!bool) {
     if (str !== num) {
-      return assert.returnType(new Foo(str), Foo);
+      return _assert.assert.returnType(new Foo(str), Foo);
     }
   }
   var nums = [num].forEach(function (item) {
     return num * 2;
   });
-  return assert.returnType(new Foo(), Foo);
+  return _assert.assert.returnType(new Foo(), Foo);
 }
