@@ -38,3 +38,5 @@ test('function-declaration');
 test('arrow-function');
 test('class-instance-method');
 test('class-static-method');
+test('no-type');
+test('scope');
