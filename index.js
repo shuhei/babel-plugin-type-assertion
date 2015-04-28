@@ -68,6 +68,20 @@ function argumentTypes(typeName) {
   );
 }
 
+function genericType(typeId, arg) {
+  return t.callExpression(
+    t.memberExpression(t.identifier(ASSERT_NAME), t.identifier('genericType')),
+    [typeId, arg]
+  );
+}
+
+function arrayOf(arg) {
+  return t.callExpression(
+    t.memberExpression(t.identifier(ASSERT_NAME), t.identifier('arrayOf')),
+    [arg]
+  );
+}
+
 function typeForAnnotation(annotation) {
   if (!annotation) {
     return argumentTypes('any');
@@ -80,8 +94,17 @@ function typeForAnnotation(annotation) {
     case 'BooleanTypeAnnotation':
       return argumentTypes('boolean');
     case 'GenericTypeAnnotation':
-      // TODO: annotation.typeParameters such as List<Foo>
-      return annotation.id;
+      if (annotation.typeParameters) {
+        // FIXME: Ignoring other params.
+        var childType = typeForAnnotation(annotation.typeParameters.params[0]);
+        if (annotation.id.name === 'Array') {
+          return arrayOf(childType);
+        } else {
+          return genericType(annotation.id, childType);
+        }
+      } else {
+        return annotation.id;
+      }
     // TODO: ObjectTypeAnnotation
     // TODO: FunctionTypeAnnotation
     // TOOD: void?

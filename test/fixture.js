@@ -39,4 +39,5 @@ test('arrow-function');
 test('class-instance-method');
 test('class-static-method');
 test('no-type');
+test('generics');
 test('scope');

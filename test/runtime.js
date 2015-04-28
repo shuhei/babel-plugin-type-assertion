@@ -26,3 +26,19 @@ a.throws(() => {
   }
   hello('');
 }, /Expected to return an instance of number, got "wow"/);
+
+console.log('- runtime: array argument');
+a.throws(() => {
+  function hello(nums: Array<number>): Array<string> {
+    return nums.map((num) => num.toString());
+  }
+  hello(['1', '2', '3']);
+}, /Invalid arguments given/);
+
+console.log('- runtime: array return');
+a.throws(() => {
+  function hello(nums: Array<number>): Array<number> {
+    return nums.map((num) => num.toString());
+  }
+  hello([1, 2, 3]);
+}, /Expected to return an instance of array of number, got \["1", "2", "3"\]/);
