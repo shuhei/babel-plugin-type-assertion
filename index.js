@@ -63,7 +63,7 @@ var returnVisitor = {
 
 function argumentTypes(typeName) {
   return t.memberExpression(
-    t.identifier(ASSERT_NAME),
+    t.memberExpression(t.identifier(ASSERT_NAME), t.identifier('type')),
     t.identifier(typeName)
   );
 }
@@ -104,6 +104,8 @@ function AssertionInjector(path, file) {
 
 AssertionInjector.prototype.run = function () {
   this.scope.traverse(this.node, functionVisitor, this);
+  // TODO: `var foo: Foo = bar;` -> `var foo = assert.type(bar, Foo);`
+
   if (this.injected) {
     this.insertImport();
   }
@@ -151,6 +153,7 @@ AssertionInjector.prototype.insertArgumentAssertion = function (func) {
 };
 
 // TODO: Babel's parser doesn't support return type of arrow function.
+// TODO: Support void.
 AssertionInjector.prototype.insertReturnAssertion = function (func, scope) {
   if (!func.returnType) {
     return;
