@@ -27,6 +27,22 @@ a.throws(() => {
   hello('');
 }, /Expected to return an instance of number, got "wow"/);
 
+console.log('- runtime: return void error');
+a.throws(() => {
+  function hello(str: string): void {
+    return str;
+  }
+  hello('hello');
+}, /Expected to return an instance of void, got "hello"/);
+
+console.log('- runtime: return void');
+a.doesNotThrow(() => {
+  function hello(str: string): void {
+    return;
+  }
+  hello('hello');
+});
+
 console.log('- runtime: array argument');
 a.throws(() => {
   function hello(nums: Array<number>) {

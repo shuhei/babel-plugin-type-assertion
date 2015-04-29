@@ -46,7 +46,7 @@ var returnVisitor = {
         return;
       }
       var args = [
-        node.argument,
+        node.argument || t.identifier('undefined'),
         typeForAnnotation(state.annotation)
       ];
       var statement = t.returnStatement(
@@ -61,7 +61,7 @@ var returnVisitor = {
   }
 };
 
-function argumentTypes(typeName) {
+function primitive(typeName) {
   return t.memberExpression(
     t.memberExpression(t.identifier(ASSERT_NAME), t.identifier('type')),
     t.identifier(typeName)
@@ -99,15 +99,17 @@ function structure(definitionProperties) {
 
 function typeForAnnotation(annotation) {
   if (!annotation) {
-    return argumentTypes('any');
+    return primitive('any');
   }
   switch (annotation.type) {
     case 'StringTypeAnnotation':
-      return argumentTypes('string');
+      return primitive('string');
     case 'NumberTypeAnnotation':
-      return argumentTypes('number');
+      return primitive('number');
     case 'BooleanTypeAnnotation':
-      return argumentTypes('boolean');
+      return primitive('boolean');
+    case 'VoidTypeAnnotation':
+      return primitive('void');
     case 'GenericTypeAnnotation':
       if (annotation.typeParameters) {
         // FIXME: Ignoring other params.
@@ -122,12 +124,11 @@ function typeForAnnotation(annotation) {
       }
     case 'ObjectTypeAnnotation':
       return structure(annotation.properties);
+    // TODO: FunctionTypeAnnotation
     case 'FunctionTypeAnnotation':
-    // TODO
-    // TOOD: void?
     // TODO: Any other types?
     default:
-      return argumentTypes('any');
+      return primitive('any');
   }
 }
 
@@ -171,14 +172,12 @@ AssertionInjector.prototype.insertArgumentAssertion = function (func) {
   if (!hasAnnotations) {
     return;
   }
-  var types = func.params.map(function(param) {
-    var annotation = param.typeAnnotation && param.typeAnnotation.typeAnnotation;
-    return typeForAnnotation(annotation);
-  });
-  var args = func.params.reduce(function (acc, identifier, i) {
-    // Remove default value from identifier.
+  var args = func.params.reduce(function (acc, identifier) {
+    var annotation = identifier.typeAnnotation && identifier.typeAnnotation.typeAnnotation;
+    var type = typeForAnnotation(annotation);
+    // TODO: Remove default value from identifier.
     acc.push(identifier);
-    acc.push(types[i]);
+    acc.push(type);
     return acc;
   }, []);
   var statement = t.expressionStatement(
