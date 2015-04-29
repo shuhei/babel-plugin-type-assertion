@@ -41,3 +41,4 @@ test('class-static-method');
 test('no-type');
 test('generics');
 test('scope');
+test('object');

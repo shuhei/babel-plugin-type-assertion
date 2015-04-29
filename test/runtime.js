@@ -6,7 +6,7 @@ a.throws(() => {
     return str.length;
   }
   hello(3);
-}, /Invalid arguments given/);
+}, /Invalid arguments given[\s\S]*1st argument has to be an instance of string, got 3/);
 
 console.log('- runtime: last return');
 a.throws(() => {
@@ -29,16 +29,22 @@ a.throws(() => {
 
 console.log('- runtime: array argument');
 a.throws(() => {
-  function hello(nums: Array<number>): Array<string> {
-    return nums.map((num) => num.toString());
+  function hello(nums: Array<number>) {
   }
   hello(['1', '2', '3']);
-}, /Invalid arguments given/);
+}, /Invalid arguments given[\s\S]*1st argument has to be an instance of array of number/);
 
 console.log('- runtime: array return');
 a.throws(() => {
-  function hello(nums: Array<number>): Array<number> {
+  function hello(nums): Array<number> {
     return nums.map((num) => num.toString());
   }
   hello([1, 2, 3]);
 }, /Expected to return an instance of array of number, got \["1", "2", "3"\]/);
+
+console.log('- runtime: object');
+a.throws(() => {
+  function hello(person: { name: string; age: number }) {
+  }
+  hello({ name: 'shuhei', age: true });
+}, /Invalid arguments given[\s\S]*true is not instance of number/);

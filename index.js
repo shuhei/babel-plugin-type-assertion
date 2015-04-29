@@ -82,6 +82,21 @@ function arrayOf(arg) {
   );
 }
 
+function structure(definitionProperties) {
+  var properties = definitionProperties.map(function (property) {
+    return t.property(
+      'init',
+      property.key,
+      typeForAnnotation(property.value)
+    );
+  });
+  var definition = t.objectExpression(properties);
+  return t.callExpression(
+    t.memberExpression(t.identifier(ASSERT_NAME), t.identifier('structure')),
+    [definition]
+  );
+}
+
 function typeForAnnotation(annotation) {
   if (!annotation) {
     return argumentTypes('any');
@@ -105,8 +120,10 @@ function typeForAnnotation(annotation) {
       } else {
         return annotation.id;
       }
-    // TODO: ObjectTypeAnnotation
-    // TODO: FunctionTypeAnnotation
+    case 'ObjectTypeAnnotation':
+      return structure(annotation.properties);
+    case 'FunctionTypeAnnotation':
+    // TODO
     // TOOD: void?
     // TODO: Any other types?
     default:
@@ -148,7 +165,6 @@ AssertionInjector.prototype.insertArgumentAssertion = function (func) {
   if (func.params.length === 0) {
     return;
   }
-  var identifiers = func.params;
   var hasAnnotations = func.params.reduce(function (acc, param) {
     return acc || !!param.typeAnnotation;
   }, false);
@@ -159,7 +175,7 @@ AssertionInjector.prototype.insertArgumentAssertion = function (func) {
     var annotation = param.typeAnnotation && param.typeAnnotation.typeAnnotation;
     return typeForAnnotation(annotation);
   });
-  var args = identifiers.reduce(function (acc, identifier, i) {
+  var args = func.params.reduce(function (acc, identifier, i) {
     // Remove default value from identifier.
     acc.push(identifier);
     acc.push(types[i]);
