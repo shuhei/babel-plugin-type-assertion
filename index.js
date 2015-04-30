@@ -124,8 +124,9 @@ function typeForAnnotation(annotation) {
       }
     case 'ObjectTypeAnnotation':
       return structure(annotation.properties);
-    // TODO: FunctionTypeAnnotation
     case 'FunctionTypeAnnotation':
+      return t.identifier('Function');
+    // TODO: Union and Intersection.
     // TODO: Any other types?
     default:
       return primitive('any');
@@ -191,7 +192,6 @@ AssertionInjector.prototype.insertArgumentAssertion = function (func) {
 };
 
 // TODO: Babel's parser doesn't support return type of arrow function.
-// TODO: Support void.
 AssertionInjector.prototype.insertReturnAssertion = function (func, scope) {
   if (!func.returnType) {
     return;
@@ -204,8 +204,9 @@ AssertionInjector.prototype.insertReturnAssertion = function (func, scope) {
     found: false
   };
   scope.traverse(func, returnVisitor, state);
-  // TODO: Warn if return doesn't exist in the function.
   if (state.found) {
     this.injected = true;
+  } else {
+    // TODO: Warn if return doesn't exist in the function.
   }
 };

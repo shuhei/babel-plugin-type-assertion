@@ -64,3 +64,11 @@ a.throws(() => {
   }
   hello({ name: 'shuhei', age: true });
 }, /Invalid arguments given[\s\S]*true is not instance of number/);
+
+console.log('- runtime: function');
+a.throws(() => {
+  function hello(func: (num: number) => string) {
+    return func(123);
+  }
+  hello(123);
+}, /Invalid arguments given[\s\S]*1st argument has to be an instance of Function, got 123/);
