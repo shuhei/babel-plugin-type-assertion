@@ -37,7 +37,7 @@ a.throws(() => {
 
 console.log('- runtime: return void');
 a.doesNotThrow(() => {
-  function hello(str: string): void {
+  function hello(): void {
     return;
   }
   hello('hello');
@@ -46,6 +46,7 @@ a.doesNotThrow(() => {
 console.log('- runtime: array argument');
 a.throws(() => {
   function hello(nums: Array<number>) {
+    return nums;
   }
   hello(['1', '2', '3']);
 }, /Invalid arguments given[\s\S]*1st argument has to be an instance of array of number/);
@@ -61,6 +62,7 @@ a.throws(() => {
 console.log('- runtime: object');
 a.throws(() => {
   function hello(person: { name: string; age: number }) {
+    return person;
   }
   hello({ name: 'shuhei', age: true });
 }, /Invalid arguments given[\s\S]*true is not instance of number/);
