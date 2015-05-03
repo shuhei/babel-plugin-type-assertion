@@ -6,7 +6,7 @@ var Transformer = babel.Transformer;
 
 // TODO: Use UID to avoid name collision.
 var ASSERT_NAME = 'assert';
-var types = require('./types')(ASSERT_NAME);
+var helper = require('babel-rtts-helper')(ASSERT_NAME);
 
 // Make alias keys available in oridinary visitors.
 // https://github.com/babel/babel/blob/master/src/babel/types/alias-keys.json
@@ -42,7 +42,7 @@ var returnVisitor = {
       }
       var args = [
         node.argument || t.identifier('undefined'),
-        types.typeForAnnotation(state.annotation)
+        helper.typeForAnnotation(state.annotation)
       ];
       var statement = t.returnStatement(
         t.callExpression(
@@ -98,7 +98,7 @@ AssertionInjector.prototype.insertArgumentAssertion = function (func) {
   }
   var args = func.params.reduce(function (acc, identifier) {
     var annotation = identifier.typeAnnotation && identifier.typeAnnotation.typeAnnotation;
-    var type = types.typeForAnnotation(annotation);
+    var type = helper.typeForAnnotation(annotation);
     // TODO: Remove default value from identifier.
     acc.push(identifier);
     acc.push(type);
