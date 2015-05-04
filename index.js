@@ -80,7 +80,9 @@ AssertionInjector.prototype.insertImport = function () {
   var specifiers = [t.importSpecifier(t.identifier('assert'), t.identifier(ASSERT_NAME), '')];
   var declaration = t.importDeclaration(specifiers, t.literal('rtts_assert/es6/src/rtts_assert'));
   this.node.body.unshift(declaration);
-  this.path.replaceWith(this.node);
+  // Update scope and path.
+  this.path.setScope();
+  this.path.checkSelf();
   // Because we added the new import declaration, we need to update local imports cache
   // so that assignments will be properly remapped by `file.moduleFormatter.remapAssignments()`.
   this.file.moduleFormatter.getLocalImports();
@@ -134,7 +136,7 @@ AssertionInjector.prototype.insertReturnAssertion = function (func, scope) {
   }
 };
 
-module.exports = new Transformer('angular2-type-assertion', {
+module.exports = new Transformer('type-assertion', {
   Program: {
     enter: function (node, parent, scope, file) {
       new AssertionInjector(this, file).run();
