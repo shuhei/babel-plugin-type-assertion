@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-type-assertion",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A babel plugin for runtime assertion",
   "main": "index.js",
   "scripts": {
