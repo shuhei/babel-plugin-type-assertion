@@ -93,15 +93,24 @@ AssertionInjector.prototype.insertArgumentAssertion = function (func) {
     return;
   }
   var hasAnnotations = func.params.reduce(function (acc, param) {
-    return acc || !!param.typeAnnotation;
+    var identifier = param;
+    if (param.type === 'AssignmentPattern') {
+      // Default parameter.
+      identifier = param.left;
+    }
+    return acc || !!identifier.typeAnnotation;
   }, false);
   if (!hasAnnotations) {
     return;
   }
-  var args = func.params.reduce(function (acc, identifier) {
+  var args = func.params.reduce(function (acc, param) {
+    var identifier = param;
+    if (param.type === 'AssignmentPattern') {
+      // Default parameter.
+      identifier = param.left;
+    }
     var annotation = identifier.typeAnnotation && identifier.typeAnnotation.typeAnnotation;
     var type = helper.typeForAnnotation(annotation);
-    // TODO: Remove default value from identifier.
     acc.push(identifier);
     acc.push(type);
     return acc;

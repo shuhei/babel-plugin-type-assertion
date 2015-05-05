@@ -8,6 +8,14 @@ a.throws(() => {
   hello(3);
 }, /Invalid arguments given[\s\S]*1st argument has to be an instance of string, got 3/);
 
+console.log('- runtime: default argument');
+a.throws(() => {
+  function hello(str: string = ''): number {
+    return str.length;
+  }
+  hello(3);
+}, /Invalid arguments given[\s\S]*1st argument has to be an instance of string, got 3/);
+
 console.log('- runtime: last return');
 a.throws(() => {
   function hello(str: string): number {
