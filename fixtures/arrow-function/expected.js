@@ -1,9 +1,9 @@
 "use strict";
 
-var _assert = require("rtts_assert/es6/src/rtts_assert");
+var _rtts_assertEs6SrcRtts_assert = require("rtts_assert/es6/src/rtts_assert");
 
 var doSomething = function doSomething(str, num, bool) {
-  _assert.assert.argumentTypes(str, _assert.assert.type.string, num, _assert.assert.type.number, bool, _assert.assert.type.boolean);
+  _rtts_assertEs6SrcRtts_assert.assert.argumentTypes(str, _rtts_assertEs6SrcRtts_assert.assert.type.string, num, _rtts_assertEs6SrcRtts_assert.assert.type.number, bool, _rtts_assertEs6SrcRtts_assert.assert.type.boolean);
 
   return new Foo();
 };

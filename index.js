@@ -80,9 +80,8 @@ AssertionInjector.prototype.insertImport = function () {
   var specifiers = [t.importSpecifier(t.identifier('assert'), t.identifier(ASSERT_NAME), '')];
   var declaration = t.importDeclaration(specifiers, t.literal('rtts_assert/es6/src/rtts_assert'));
   this.node.body.unshift(declaration);
-  // Update scope and path.
+  // Update scope.
   this.path.setScope();
-  this.path.checkSelf();
   // Because we added the new import declaration, we need to update local imports cache
   // so that assignments will be properly remapped by `file.moduleFormatter.remapAssignments()`.
   this.file.moduleFormatter.getLocalImports();

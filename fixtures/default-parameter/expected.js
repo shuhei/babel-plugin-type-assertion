@@ -1,11 +1,11 @@
 'use strict';
 
-var _assert = require('rtts_assert/es6/src/rtts_assert');
+var _rtts_assertEs6SrcRtts_assert = require('rtts_assert/es6/src/rtts_assert');
 
 function doSomething() {
   var str = arguments[0] === undefined ? 'hello' : arguments[0];
 
-  _assert.assert.argumentTypes(str, _assert.assert.type.string);
+  _rtts_assertEs6SrcRtts_assert.assert.argumentTypes(str, _rtts_assertEs6SrcRtts_assert.assert.type.string);
 
-  return _assert.assert.returnType(str, _assert.assert.type.string);
+  return _rtts_assertEs6SrcRtts_assert.assert.returnType(str, _rtts_assertEs6SrcRtts_assert.assert.type.string);
 }
