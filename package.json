@@ -31,6 +31,6 @@
     "rtts_assert": "^2.0.0-alpha.23"
   },
   "dependencies": {
-    "babel-rtts-helper": "^0.1.0"
+    "babel-rtts-helper": "^0.2.0"
   }
 }

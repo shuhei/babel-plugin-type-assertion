@@ -1,12 +1,14 @@
 'use strict';
 
+var createHelper = require('babel-rtts-helper');
+
 module.exports = function (babel) {
   var t = babel.types;
   var Transformer = babel.Transformer;
 
   // TODO: Use UID to avoid name collision.
   var ASSERT_NAME = 'assert';
-  var helper = require('babel-rtts-helper')(ASSERT_NAME);
+  var helper = createHelper(babel, ASSERT_NAME);
 
   // Make alias keys available in oridinary visitors.
   // https://github.com/babel/babel/blob/master/src/babel/types/alias-keys.json
