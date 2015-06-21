@@ -6,10 +6,6 @@ module.exports = function (babel) {
   var t = babel.types;
   var Transformer = babel.Transformer;
 
-  // TODO: Use UID to avoid name collision.
-  var ASSERT_NAME = 'assert';
-  var helper = createHelper(babel, ASSERT_NAME);
-
   // Make alias keys available in oridinary visitors.
   // https://github.com/babel/babel/blob/master/src/babel/types/alias-keys.json
   function applyAlias(visitor) {
@@ -26,37 +22,41 @@ module.exports = function (babel) {
     }, {});
   }
 
-  var functionVisitor = applyAlias({
-    Function: {
-      enter: function (node, parent, scope, injector) {
-        injector.insertArgumentAssertion(node);
-        injector.insertReturnAssertion(node, scope);
-      }
-    }
-  });
-
-  var returnVisitor = {
-    ReturnStatement: {
-      enter: function (node, parent, scope, state) {
-        // Ignore inner functions.
-        if (scope.getFunctionParent() !== state.scope) {
-          return undefined;
+  function createFunctionVisitor() {
+    return applyAlias({
+      Function: {
+        enter: function (node, parent, scope, injector) {
+          injector.insertArgumentAssertion(node);
+          injector.insertReturnAssertion(node, scope);
         }
-        var args = [
-          node.argument || t.identifier('undefined'),
-          helper.typeForAnnotation(state.annotation)
-        ];
-        var statement = t.returnStatement(
-          t.callExpression(
-            t.memberExpression(t.identifier(ASSERT_NAME), t.identifier('returnType')),
-            args
-          )
-        );
-        state.found = true;
-        return statement;
       }
-    }
-  };
+    });
+  }
+
+  function createReturnVisitor(assertId, helper) {
+    return {
+      ReturnStatement: {
+        enter: function (node, parent, scope, state) {
+          // Ignore inner functions.
+          if (scope.getFunctionParent() !== state.scope) {
+            return undefined;
+          }
+          var args = [
+            node.argument || t.identifier('undefined'),
+            helper.typeForAnnotation(state.annotation)
+          ];
+          var statement = t.returnStatement(
+            t.callExpression(
+              t.memberExpression(assertId, t.identifier('returnType')),
+              args
+            )
+          );
+          state.found = true;
+          return statement;
+        }
+      }
+    };
+  }
 
   function AssertionInjector(path, file) {
     this.node = path.node;
@@ -67,10 +67,13 @@ module.exports = function (babel) {
     this.file = file;
 
     this.injected = false;
+    this.assertName = 'assert';
+    this.assertId = t.identifier(this.assertName);
+    this.helper = createHelper(babel, this.assertName);
   }
 
   AssertionInjector.prototype.run = function () {
-    this.scope.traverse(this.node, functionVisitor, this);
+    this.scope.traverse(this.node, createFunctionVisitor(), this);
     // TODO: `var foo: Foo = bar;` -> `var foo = assert.type(bar, Foo);`
 
     if (this.injected) {
@@ -78,15 +81,22 @@ module.exports = function (babel) {
     }
   };
 
+  // TODO: Use babel's File.prototype.addImport when it supports named specifiers.
+  // https://github.com/babel/babel/issues/1436
   AssertionInjector.prototype.insertImport = function () {
-    var specifiers = [t.importSpecifier(t.identifier('assert'), t.identifier(ASSERT_NAME), '')];
-    var declaration = t.importDeclaration(specifiers, t.literal('rtts_assert/es6/src/rtts_assert'));
-    this.node.body.unshift(declaration);
-    // Update scope.
-    this.path.setScope();
-    // Because we added the new import declaration, we need to update local imports cache
-    // so that assignments will be properly remapped by `file.moduleFormatter.remapAssignments()`.
-    this.file.moduleFormatter.getLocalImports();
+    var id = this.file.dynamicImportIds[this.assertName];
+    if (!id) {
+      id = this.file.dynamicImportIds[this.assertName] = this.assertId;
+      var specifiers = [t.importSpecifier(t.identifier('assert'), this.assertId, '')];
+      var declaration = t.importDeclaration(specifiers, t.literal('rtts_assert/es6/src/rtts_assert'));
+      /* eslint-disable no-underscore-dangle */
+      declaration._blockHoist = 3;
+      /* eslint-enable no-underscore-dangle */
+
+      this.file.moduleFormatter.importSpecifier(specifiers[0], declaration, this.file.dynamicImports, this.file.scope);
+      this.file.moduleFormatter.hasLocalImports = true;
+    }
+    return id;
   };
 
   AssertionInjector.prototype.insertArgumentAssertion = function (func) {
@@ -111,14 +121,14 @@ module.exports = function (babel) {
         identifier = param.left;
       }
       var annotation = identifier.typeAnnotation && identifier.typeAnnotation.typeAnnotation;
-      var type = helper.typeForAnnotation(annotation);
+      var type = this.helper.typeForAnnotation(annotation);
       acc.push(identifier);
       acc.push(type);
       return acc;
-    }, []);
+    }.bind(this), []);
     var statement = t.expressionStatement(
       t.callExpression(
-        t.memberExpression(t.identifier(ASSERT_NAME), t.identifier('argumentTypes')),
+        t.memberExpression(this.assertId, t.identifier('argumentTypes')),
         args
       )
     );
@@ -138,7 +148,7 @@ module.exports = function (babel) {
       annotation: annotation,
       found: false
     };
-    scope.traverse(func, returnVisitor, state);
+    scope.traverse(func, createReturnVisitor(this.assertId, this.helper), state);
     if (state.found) {
       this.injected = true;
     } else {

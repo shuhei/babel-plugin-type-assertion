@@ -24,11 +24,11 @@
   },
   "homepage": "https://github.com/shuhei/babel-plugin-type-assertion",
   "devDependencies": {
-    "babel-core": "^5.3.1",
+    "babel-core": "^5.6.1",
     "chalk": "^1.0.0",
     "diff": "^1.4.0",
-    "eslint": "^0.21.0",
-    "rtts_assert": "^2.0.0-alpha.23"
+    "eslint": "^0.23.0",
+    "rtts_assert": "^2.0.0-alpha.27"
   },
   "dependencies": {
     "babel-rtts-helper": "^0.2.0"
