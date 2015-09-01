@@ -2,9 +2,11 @@
   "name": "babel-plugin-type-assertion",
   "version": "0.2.2",
   "description": "A babel plugin for runtime assertion",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "BABEL_DISABLE_CACHE=1 node test",
+    "build": "babel-plugin build",
+    "push": "babel-plugin publish",
+    "test": "babel-plugin build && BABEL_DISABLE_CACHE=1 node test",
     "lint": "eslint ."
   },
   "repository": {
@@ -24,11 +26,12 @@
   },
   "homepage": "https://github.com/shuhei/babel-plugin-type-assertion",
   "devDependencies": {
-    "babel-core": "^5.6.1",
+    "babel": "^5.8.23",
+    "babel-core": "^5.8.23",
     "chalk": "^1.0.0",
     "diff": "^1.4.0",
     "eslint": "^0.23.0",
-    "rtts_assert": "^2.0.0-alpha.27"
+    "rtts_assert": "^2.0.0-alpha.36"
   },
   "dependencies": {
     "babel-rtts-helper": "^0.2.0"

@@ -11,7 +11,7 @@ function test(fixtureName) {
   const fixture = fs.readFileSync(path.resolve('fixtures', fixtureName, 'fixture.js')).toString();
   const expected = fs.readFileSync(path.resolve('fixtures', fixtureName, 'expected.js')).toString();
   const actual = transform(fixture, {
-    plugins: ['./index'],
+    plugins: ['./lib/index'],
     externalHelpers: true
   }).code + '\n';
   assertLines(actual, expected);

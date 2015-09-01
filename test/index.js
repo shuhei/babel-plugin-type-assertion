@@ -1,7 +1,7 @@
 require('babel-core/register')({
   ignore: false,
-  only: /(\/test\/|rtts_assert)/,
-  plugins: ['./index']
+  only: /\/test\//,
+  plugins: ['./lib/index']
 });
 require('./fixture');
 require('./runtime');
